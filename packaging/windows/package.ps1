@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Build, sign and package DesignCraft for Windows.
+  Build, sign and package WooshinLayout for Windows.
 
 .DESCRIPTION
   Produces, in $env:DIST (default: dist/release):
@@ -53,7 +53,7 @@ New-Item -ItemType Directory -Force -Path $Dist | Out-Null
 if (-not $env:DESIGNCRAFT_BUILD_SHA) { $env:DESIGNCRAFT_BUILD_SHA = (git -C $Root rev-parse HEAD 2>$null) }
 if (-not $env:DESIGNCRAFT_BUILD_DATE) { $env:DESIGNCRAFT_BUILD_DATE = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd') }
 
-Write-Output "DesignCraft $Version for Windows $Arch ($Target)"
+Write-Output "WooshinLayout $Version for Windows $Arch ($Target)"
 
 if (-not $SkipBuild) {
   # Static CRT: no VC++ redistributable needed. Scoped to the target so host build scripts and
@@ -87,11 +87,14 @@ $Stage = Join-Path $TargetDir "windows-package\$Arch"
 Remove-Item -Recurse -Force $Stage -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Stage | Out-Null
 Copy-Item (Join-Path $Bin 'designcraft.exe'), (Join-Path $Bin 'designcraft-cli.exe') $Stage
+# Cargo outputs keep upstream names; distribution aliases isolate this fork.
+Rename-Item -LiteralPath (Join-Path $Stage 'designcraft.exe') -NewName 'wooshin-layout.exe'
+Rename-Item -LiteralPath (Join-Path $Stage 'designcraft-cli.exe') -NewName 'wooshin-layout-cli.exe'
 
-& (Join-Path $PSScriptRoot 'sign.ps1') (Join-Path $Stage 'designcraft.exe') (Join-Path $Stage 'designcraft-cli.exe')
+& (Join-Path $PSScriptRoot 'sign.ps1') (Join-Path $Stage 'wooshin-layout.exe') (Join-Path $Stage 'wooshin-layout-cli.exe')
 
 # ---- MSI ---------------------------------------------------------------------------------------
-$Msi = Join-Path $Dist "designcraft-$Version-windows-$Arch.msi"
+$Msi = Join-Path $Dist "wooshin-layout-$Version-windows-$Arch.msi"
 Invoke-Native 'wix build' {
   wix build (Join-Path $PSScriptRoot 'designcraft.wxs') -arch $Arch `
     -d "Version=$MsiVersion" -d "BinDir=$Stage" -d "IconPath=$(Join-Path $Root 'assets\app-icon\designcraft.ico')" `
@@ -102,11 +105,11 @@ Remove-Item -Force -ErrorAction SilentlyContinue ([IO.Path]::ChangeExtension($Ms
 & (Join-Path $PSScriptRoot 'sign.ps1') $Msi
 
 # ---- portable zip ------------------------------------------------------------------------------
-$Portable = Join-Path $TargetDir "windows-package\designcraft-$Version-windows-$Arch-portable"
+$Portable = Join-Path $TargetDir "windows-package\wooshin-layout-$Version-windows-$Arch-portable"
 Remove-Item -Recurse -Force $Portable -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Portable | Out-Null
 Copy-Item (Join-Path $Stage '*.exe') $Portable
-foreach ($f in 'README.md', 'LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE') {
+foreach ($f in 'README.md', 'LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE', 'NOTICE', 'ATTRIBUTION.md') {
   $p = Join-Path $Root $f
   if (Test-Path $p) { Copy-Item $p $Portable }
 }
@@ -116,7 +119,7 @@ if ($env:CRAFT_FONTS_DIR) {
     Copy-Item $ofl.FullName (Join-Path $Portable "OFL-$($ofl.Directory.Name).txt")
   }
 }
-$Zip = Join-Path $Dist "designcraft-$Version-windows-$Arch-portable.zip"
+$Zip = Join-Path $Dist "wooshin-layout-$Version-windows-$Arch-portable.zip"
 Remove-Item -Force $Zip -ErrorAction SilentlyContinue
 Compress-Archive -Path $Portable -DestinationPath $Zip
 
@@ -124,7 +127,7 @@ Compress-Archive -Path $Portable -DestinationPath $Zip
 # here; .github/workflows/windows-arm64.yml installs and runs it on ARM64 instead.
 $HostArch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
 if ($Arch -ne 'arm64' -or $HostArch -eq 'arm64') {
-  Invoke-Native 'designcraft-cli --version' { & (Join-Path $Stage 'designcraft-cli.exe') --version }
+  Invoke-Native 'designcraft-cli --version' { & (Join-Path $Stage 'wooshin-layout-cli.exe') --version }
 } else {
   Write-Output "skipping designcraft-cli --version: an $Arch build doesn't run on this $HostArch machine"
 }

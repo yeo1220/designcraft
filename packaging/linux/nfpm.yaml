@@ -3,7 +3,7 @@
 # exports VERSION and NFPM_ARCH.
 #
 #   nfpm package -f packaging/linux/nfpm.yaml -p deb -t dist/release/
-name: designcraft
+name: wooshin-layout
 arch: ${NFPM_ARCH}
 platform: linux
 version: ${VERSION}
@@ -13,8 +13,8 @@ release: 1
 section: graphics
 priority: optional
 maintainer: ${DESIGNCRAFT_MAINTAINER}
-vendor: Learning Machines LLC
-homepage: https://getartcraft.com/apps/designcraft
+vendor: Wooshin
+homepage: https://github.com/yeo1220/designcraft
 license: MIT OR Apache-2.0
 description: |-
   Open-source, native page layout and publishing that works the way InDesign users expect.
@@ -55,11 +55,11 @@ overrides:
       - xdg-desktop-portal
 
 contents:
-  - src: ${STAGE}/usr/bin/designcraft
-    dst: /usr/bin/designcraft
+  - src: ${STAGE}/usr/bin/wooshin-layout
+    dst: /usr/bin/wooshin-layout
     file_info: { mode: 0755 }
-  - src: ${STAGE}/usr/bin/designcraft-cli
-    dst: /usr/bin/designcraft-cli
+  - src: ${STAGE}/usr/bin/wooshin-layout-cli
+    dst: /usr/bin/wooshin-layout-cli
     file_info: { mode: 0755 }
   - src: ${STAGE}/usr/share/
     dst: /usr/share/

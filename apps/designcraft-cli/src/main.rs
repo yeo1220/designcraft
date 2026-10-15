@@ -176,7 +176,7 @@ fn mcp(args: &[String]) -> Result<(), String> {
             let addr = control_addr(&c);
             Box::new(
                 Remote::connect(&addr)
-                    .map_err(|e| format!("cannot connect to the DesignCraft app at {addr}: {e} (start it with `designcraft --control PORT`)"))?,
+                    .map_err(|e| format!("cannot connect to the Wooshin Layout app at {addr}: {e} (start it with `designcraft --control PORT`)"))?,
             )
         }
         None => {
@@ -388,7 +388,7 @@ fn script(args: &[String]) -> Result<(), String> {
             let addr = control_addr(c);
             Box::new(
                 Remote::connect(&addr)
-                    .map_err(|e| format!("cannot connect to the DesignCraft app at {addr}: {e} (start it with `designcraft --control PORT`)"))?,
+                    .map_err(|e| format!("cannot connect to the Wooshin Layout app at {addr}: {e} (start it with `designcraft --control PORT`)"))?,
             )
         }
         None => Box::new(Headless::with_document()),
@@ -451,7 +451,7 @@ fn app(args: &[String]) -> Result<(), String> {
     }
     let addr = control_addr(&port);
     let mut r = Remote::connect(&addr)
-        .map_err(|e| format!("cannot connect to the DesignCraft app at {addr}: {e} (start it with `designcraft --control {port}`)"))?;
+        .map_err(|e| format!("cannot connect to the Wooshin Layout app at {addr}: {e} (start it with `designcraft --control {port}`)"))?;
     let json_arg =
         |s: Option<&String>| -> Result<Value, String> { s.map_or(Ok(json!({})), |t| serde_json::from_str(t).map_err(|e| format!("bad JSON: {e}"))) };
     let out = match method {

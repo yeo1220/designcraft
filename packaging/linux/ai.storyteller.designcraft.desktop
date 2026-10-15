@@ -1,13 +1,14 @@
 [Desktop Entry]
 Type=Application
-Name=DesignCraft
+Name=Wooshin Layout
+Name[ko]=우신 출판
 GenericName=Page Layout
 Comment=Lay out magazines, books and print documents
-Exec=designcraft %F
-TryExec=designcraft
-Icon=ai.storyteller.designcraft
+Exec=wooshin-layout %F
+TryExec=wooshin-layout
+Icon=com.wooshin.tools.layout
 Terminal=false
 StartupNotify=true
-StartupWMClass=ai.storyteller.designcraft
+StartupWMClass=com.wooshin.tools.layout
 Categories=Graphics;Publishing;
 Keywords=layout;page;desktop publishing;dtp;magazine;book;indesign;idml;typesetting;

@@ -36,12 +36,12 @@ impl NativeMenu {
         let mut items = HashMap::new();
         let mut counter = 0usize;
         // Application menu.
-        let app_menu = Submenu::new("DesignCraft", true);
+        let app_menu = Submenu::new("Wooshin Layout", true);
         // Our own About splash (with the community links) instead of the stock panel.
-        let about = MenuItem::with_id("dc-about", "About DesignCraft", true, None);
-        let discord = MenuItem::with_id("dc-discord", "Join the ArtCraft Discord…", true, None);
+        let about = MenuItem::with_id("dc-about", "About Wooshin Layout", true, None);
+        let discord = MenuItem::with_id("dc-discord", "Open Wooshin Portal…", true, None);
         // Not the predefined Quit: it terminates the app at once, past the unsaved-changes prompt.
-        let quit = MenuItem::with_id("dc-quit", designcraft_ui_egui::i18n::tr(&app.ui.language, "Quit DesignCraft"), true, accel("Cmd+Q"));
+        let quit = MenuItem::with_id("dc-quit", designcraft_ui_egui::i18n::tr(&app.ui.language, "Quit Wooshin Layout"), true, accel("Cmd+Q"));
         let _ = app_menu.append_items(&[
             &about,
             &discord,

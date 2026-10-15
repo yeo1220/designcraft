@@ -14,12 +14,12 @@ fn main() {
     }
     let mut res = winresource::WindowsResource::new();
     res.set_icon("../../assets/app-icon/designcraft.ico")
-        .set("ProductName", "DesignCraft")
-        .set("FileDescription", "DesignCraft page layout")
-        .set("CompanyName", "Learning Machines LLC")
+        .set("ProductName", "우신 출판")
+        .set("FileDescription", "우신 출판 — 안내문·책자·페이지 편집")
+        .set("CompanyName", "Wooshin")
         .set("LegalCopyright", "Copyright (c) the DesignCraft authors. MIT OR Apache-2.0.")
-        .set("OriginalFilename", "designcraft.exe")
-        .set("InternalName", "designcraft");
+        .set("OriginalFilename", "wooshin-layout.exe")
+        .set("InternalName", "wooshin-layout");
     if let Err(e) = res.compile() {
         if std::env::var_os("DESIGNCRAFT_REQUIRE_WINRES").is_some() {
             eprintln!("embedding Windows resources failed: {e}");

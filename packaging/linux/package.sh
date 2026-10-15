@@ -17,7 +17,8 @@ set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 HERE="$ROOT/packaging/linux"
-APP_ID=ai.storyteller.designcraft
+SOURCE_APP_ID=ai.storyteller.designcraft
+APP_ID=com.wooshin.tools.layout
 
 SKIP_BUILD=0
 FORMATS="appimage deb rpm tar"
@@ -37,7 +38,7 @@ case "$ARCH" in
   aarch64 | arm64) ARCH=aarch64; DEB_ARCH=arm64 ;;
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
-export DESIGNCRAFT_MAINTAINER="${DESIGNCRAFT_MAINTAINER:-DesignCraft maintainers <designcraft@storyteller.ai>}"
+export DESIGNCRAFT_MAINTAINER="${DESIGNCRAFT_MAINTAINER:-Wooshin}"
 BASENAME="designcraft-$VERSION-linux-$ARCH"
 
 echo "==> DesignCraft $VERSION for Linux $ARCH ($FORMATS)"
@@ -55,16 +56,20 @@ STAGE="$WORK/root"
 rm -rf "$WORK"
 
 # ---- stage an FHS tree (shared by every format) -------------------------------------------------
-install -Dm755 "$BIN/designcraft" "$STAGE/usr/bin/designcraft"
-install -Dm755 "$BIN/designcraft-cli" "$STAGE/usr/bin/designcraft-cli"
-"${CROSS_COMPILE:-}strip" "$STAGE/usr/bin/designcraft" "$STAGE/usr/bin/designcraft-cli" 2>/dev/null || true
-install -Dm644 "$HERE/$APP_ID.desktop" "$STAGE/usr/share/applications/$APP_ID.desktop"
-install -Dm644 "$HERE/$APP_ID.mime.xml" "$STAGE/usr/share/mime/packages/$APP_ID.xml"
+install -Dm755 "$BIN/designcraft" "$STAGE/usr/bin/wooshin-layout"
+install -Dm755 "$BIN/designcraft-cli" "$STAGE/usr/bin/wooshin-layout-cli"
+"${CROSS_COMPILE:-}strip" "$STAGE/usr/bin/wooshin-layout" "$STAGE/usr/bin/wooshin-layout-cli" 2>/dev/null || true
+install -Dm644 "$HERE/$SOURCE_APP_ID.desktop" "$STAGE/usr/share/applications/$APP_ID.desktop"
+install -Dm644 "$HERE/$SOURCE_APP_ID.mime.xml" "$STAGE/usr/share/mime/packages/$APP_ID.xml"
 mkdir -p "$STAGE/usr/share/metainfo"
 sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$DESIGNCRAFT_BUILD_DATE/g" \
-  "$HERE/$APP_ID.metainfo.xml.in" >"$STAGE/usr/share/metainfo/$APP_ID.metainfo.xml"
+  "$HERE/$SOURCE_APP_ID.metainfo.xml.in" >"$STAGE/usr/share/metainfo/$APP_ID.metainfo.xml"
 mkdir -p "$STAGE/usr/share/icons"
 cp -R "$ROOT/assets/app-icon/hicolor" "$STAGE/usr/share/icons/"
+for icon in "$STAGE/usr/share/icons/hicolor"/*/apps/"$SOURCE_APP_ID".png "$STAGE/usr/share/icons/hicolor"/*/apps/"$SOURCE_APP_ID".svg; do
+  [ -f "$icon" ] || continue
+  mv "$icon" "$(dirname "$icon")/$APP_ID.${icon##*.}"
+done
 mkdir -p "$STAGE/usr/share/doc/designcraft"
 copy_docs "$STAGE/usr/share/doc/designcraft"
 
@@ -104,12 +109,12 @@ if has appimage; then
     x86_64) APPIMAGETOOL_SHA256=ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0 ;;
     aarch64) APPIMAGETOOL_SHA256=f0837e7448a0c1e4e650a93bb3e85802546e60654ef287576f46c71c126a9158 ;;
   esac
-  APPDIR="$WORK/DesignCraft.AppDir"
+  APPDIR="$WORK/WooshinLayout.AppDir"
   cp -R "$STAGE" "$APPDIR"
   mv "$APPDIR/usr/share/doc" "$WORK/doc-unused"
-  ln -s usr/bin/designcraft "$APPDIR/AppRun"
-  cp "$HERE/$APP_ID.desktop" "$APPDIR/$APP_ID.desktop"
-  cp "$ROOT/assets/app-icon/hicolor/256x256/apps/$APP_ID.png" "$APPDIR/$APP_ID.png"
+  ln -s usr/bin/wooshin-layout "$APPDIR/AppRun"
+  cp "$HERE/$SOURCE_APP_ID.desktop" "$APPDIR/$APP_ID.desktop"
+  cp "$ROOT/assets/app-icon/hicolor/256x256/apps/$SOURCE_APP_ID.png" "$APPDIR/$APP_ID.png"
   ln -s "$APP_ID.png" "$APPDIR/.DirIcon"
 
   TOOL="${APPIMAGETOOL:-$(command -v appimagetool || true)}"
@@ -136,7 +141,7 @@ if has appimage; then
   # fetch only the blocks that changed in a newer release, through the .zsync published next to
   # each AppImage on GitHub Releases. `latest` is the newest published release that is not a
   # pre-release. A fork's builds point at its own releases through GITHUB_REPOSITORY.
-  REPO="${GITHUB_REPOSITORY:-storytold/designcraft}"
+  REPO="${GITHUB_REPOSITORY:-yeo1220/designcraft}"
   UPDATE_INFO="gh-releases-zsync|${REPO%%/*}|${REPO#*/}|latest|designcraft-*-linux-$ARCH.AppImage.zsync"
   # Extract-and-run: works without FUSE (containers, CI). The output embeds the static runtime,
   # so users don't need libfuse2 either. With zsyncmake on the host (CI installs the zsync
@@ -151,9 +156,9 @@ if has appimage; then
 fi
 
 if [ -z "${CROSS_TARGET:-}" ]; then
-  "$STAGE/usr/bin/designcraft-cli" --version
+  "$STAGE/usr/bin/wooshin-layout-cli" --version
 elif [ -n "${EMULATOR:-}" ]; then
-  "$EMULATOR" "$STAGE/usr/bin/designcraft-cli" --version
+  "$EMULATOR" "$STAGE/usr/bin/wooshin-layout-cli" --version
 fi
 echo "==> done"
 ls -lh "$DIST"

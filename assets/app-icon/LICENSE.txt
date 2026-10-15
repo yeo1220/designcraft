@@ -1,3 +1,7 @@
+Wooshin fork artwork notice (2026-10-15)
+Current SVG/PNG/ICO/ICNS files are new original geometric artwork by Wooshin Tools contributors, licensed MIT OR Apache-2.0.
+The following notice is retained as historical attribution of the replaced upstream artwork; it does not describe the current icons.
+
 DesignCraft app icon (designcraft.svg, designcraft-small.svg and every file derived from them in
 this directory: designcraft-1024.png, designcraft-macos-512.png, designcraft.icns, designcraft.ico,
 hicolor/).

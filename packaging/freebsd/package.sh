@@ -16,7 +16,8 @@ set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 LINUX="$ROOT/packaging/linux"
-APP_ID=ai.storyteller.designcraft
+SOURCE_APP_ID=ai.storyteller.designcraft
+APP_ID=com.wooshin.tools.layout
 
 SKIP_BUILD=0
 DRY_RUN=0
@@ -72,19 +73,25 @@ fi
 mkdir -p "$STAGE/bin" "$STAGE/share/applications" "$STAGE/share/mime/packages" \
   "$STAGE/share/metainfo" "$STAGE/share/icons" "$STAGE/share/doc/designcraft"
 install -m 755 "$BIN/designcraft" "$BIN/designcraft-cli" "$STAGE/bin/"
-strip "$STAGE/bin/designcraft" "$STAGE/bin/designcraft-cli" 2>/dev/null || true
+mv "$STAGE/bin/designcraft" "$STAGE/bin/wooshin-layout"
+mv "$STAGE/bin/designcraft-cli" "$STAGE/bin/wooshin-layout-cli"
+strip "$STAGE/bin/wooshin-layout" "$STAGE/bin/wooshin-layout-cli" 2>/dev/null || true
 # The desktop entry, MIME type, metainfo and icons are the freedesktop files Linux ships.
-install -m 644 "$LINUX/$APP_ID.desktop" "$STAGE/share/applications/$APP_ID.desktop"
-install -m 644 "$LINUX/$APP_ID.mime.xml" "$STAGE/share/mime/packages/$APP_ID.xml"
+install -m 644 "$LINUX/$SOURCE_APP_ID.desktop" "$STAGE/share/applications/$APP_ID.desktop"
+install -m 644 "$LINUX/$SOURCE_APP_ID.mime.xml" "$STAGE/share/mime/packages/$APP_ID.xml"
 sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$DESIGNCRAFT_BUILD_DATE/g" \
-  "$LINUX/$APP_ID.metainfo.xml.in" >"$STAGE/share/metainfo/$APP_ID.metainfo.xml"
+  "$LINUX/$SOURCE_APP_ID.metainfo.xml.in" >"$STAGE/share/metainfo/$APP_ID.metainfo.xml"
 cp -R "$ROOT/assets/app-icon/hicolor" "$STAGE/share/icons/"
+for icon in "$STAGE/share/icons/hicolor"/*/apps/"$SOURCE_APP_ID".png "$STAGE/share/icons/hicolor"/*/apps/"$SOURCE_APP_ID".svg; do
+  [ -f "$icon" ] || continue
+  mv "$icon" "$(dirname "$icon")/$APP_ID.${icon##*.}"
+done
 copy_docs "$STAGE/share/doc/designcraft"
 for f in NOTICE ATTRIBUTION.md; do
   if [ -f "$ROOT/$f" ]; then install -m 644 "$ROOT/$f" "$STAGE/share/doc/designcraft/"; fi
 done
 
-for f in bin/designcraft bin/designcraft-cli "share/applications/$APP_ID.desktop" \
+for f in bin/wooshin-layout bin/wooshin-layout-cli "share/applications/$APP_ID.desktop" \
   "share/icons/hicolor/256x256/apps/$APP_ID.png" "share/icons/hicolor/scalable/apps/$APP_ID.svg" \
   share/doc/designcraft/LICENSE-MIT share/doc/designcraft/LICENSE-APACHE; do
   if [ ! -e "$STAGE/$f" ]; then echo "error: $f is missing from the package" >&2; exit 1; fi
@@ -95,7 +102,7 @@ mkdir -p "$OUT_DIR"
 tar -C "$WORK" -czf "$OUT_DIR/$BASENAME.tar.gz" "$BASENAME"
 echo "wrote $OUT_DIR/$BASENAME.tar.gz"
 
-"$STAGE/bin/designcraft-cli" --version
+"$STAGE/bin/wooshin-layout-cli" --version
 if [ "$DRY_RUN" = 1 ]; then
   echo "==> dry run: tarball contents"
   tar -tzvf "$OUT_DIR/$BASENAME.tar.gz"

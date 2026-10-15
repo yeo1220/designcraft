@@ -1,8 +1,14 @@
+# 우신 출판 · Wooshin Layout
+
+우신 업무도구용 개인 포크입니다. DesignCraft by the ArtCraft team을 기반으로 합니다. 원본의 공식 배포판이 아닙니다. [브랜딩 변경 안내](docs/WOOSHIN.ko.md).
+
+---
+
 <p align="center">
   <a href="https://getartcraft.com/">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/brand/artcraft-logo-white.svg">
-      <img alt="ArtCraft" src="docs/brand/artcraft-logo.svg" width="200">
+      <source media="(prefers-color-scheme: dark)" srcset="assets/wooshin/wordmark-white.svg">
+      <img alt="ArtCraft" src="assets/wooshin/wordmark.svg" width="200">
     </picture>
   </a>
 </p>
@@ -299,6 +305,6 @@ Forks and modified versions must remove them.
 <br>
 
 <p align="center">
-  <a href="https://getartcraft.com/"><img alt="ArtCraft" src="docs/brand/artcraft-mark.svg" width="28"></a><br>
+  <a href="https://getartcraft.com/"><img alt="ArtCraft" src="assets/wooshin/mark.svg" width="28"></a><br>
   <sub>Made by the <a href="https://getartcraft.com/">ArtCraft</a> team and community.</sub>
 </p>

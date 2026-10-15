@@ -9,13 +9,13 @@
 # Wayland, xkbcommon and Vulkan at runtime; the freedesktop runtime has all of them, and the
 # GPU driver comes from its org.freedesktop.Platform.GL extension.
 #
-# ai.storyteller.designcraft.yml (same directory) is the from-source manifest for Flathub. Keep
+# com.wooshin.tools.layout.yml (same directory) is the from-source manifest for Flathub. Keep
 # runtime-version and finish-args identical in both (packaging-lint checks this).
-id: ai.storyteller.designcraft
+id: com.wooshin.tools.layout
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
-command: designcraft
+command: wooshin-layout
 finish-args:
   # Display: Wayland first; X11 only when no Wayland compositor is running.
   - --socket=wayland
@@ -31,18 +31,18 @@ finish-args:
   - --filesystem=xdg-documents
   - --filesystem=xdg-pictures
   # Deliberately not granted: network (the optional --control server listens on 127.0.0.1 in
-  # the sandbox; `flatpak override --user --share=network ai.storyteller.designcraft` exposes it
+  # the sandbox; `flatpak override --user --share=network com.wooshin.tools.layout` exposes it
   # to host agents) and home/host filesystem access.
 modules:
   - name: designcraft
     buildsystem: simple
     build-commands:
-      - install -Dm755 bin/designcraft /app/bin/designcraft
-      - install -Dm755 bin/designcraft-cli /app/bin/designcraft-cli
-      - install -Dm644 share/applications/ai.storyteller.designcraft.desktop /app/share/applications/ai.storyteller.designcraft.desktop
-      - install -Dm644 share/mime/packages/ai.storyteller.designcraft.xml /app/share/mime/packages/ai.storyteller.designcraft.xml
+      - install -Dm755 bin/wooshin-layout /app/bin/wooshin-layout
+      - install -Dm755 bin/wooshin-layout-cli /app/bin/wooshin-layout-cli
+      - install -Dm644 share/applications/com.wooshin.tools.layout.desktop /app/share/applications/com.wooshin.tools.layout.desktop
+      - install -Dm644 share/mime/packages/com.wooshin.tools.layout.xml /app/share/mime/packages/com.wooshin.tools.layout.xml
       # Already has the release's version and date substituted by package.sh.
-      - install -Dm644 share/metainfo/ai.storyteller.designcraft.metainfo.xml /app/share/metainfo/ai.storyteller.designcraft.metainfo.xml
+      - install -Dm644 share/metainfo/com.wooshin.tools.layout.metainfo.xml /app/share/metainfo/com.wooshin.tools.layout.metainfo.xml
       - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/designcraft /app/share/doc/
     sources:
       - type: dir
